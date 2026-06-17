@@ -79,17 +79,10 @@ impl R2SqlClient {
 
         if !response.status().is_success() {
             let error_text = response.text().await?;
-            return Err(anyhow::anyhow!("Query failed: {}", error_text));
+            return Err(anyhow::anyhow!("Query failed: {error_text}"));
         }
 
         let result: QueryResponse = response.json().await?;
         Ok(result)
-    }
-
-    pub async fn test_connection(&self) -> Result<bool, anyhow::Error> {
-        // R2 SQL requires a table reference, so we'll just verify the endpoint is reachable
-        // by attempting a query that will fail gracefully if there are no tables
-        // The actual connection test will be done via the Iceberg catalog listing namespaces
-        Ok(true)
     }
 }

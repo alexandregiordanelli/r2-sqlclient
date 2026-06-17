@@ -50,7 +50,6 @@ pub struct TableMetadata {
     pub schemas: Vec<Schema>,
     #[serde(rename = "current-schema-id")]
     pub current_schema_id: i32,
-    pub location: String,
 }
 
 #[derive(Deserialize, Serialize, Clone)]
@@ -97,11 +96,11 @@ impl IcebergClient {
         let body_text = response.text().await?;
 
         if !status.is_success() {
-            return Err(anyhow::anyhow!("API returned status {}: {}", status, body_text));
+            return Err(anyhow::anyhow!("API returned status {status}: {body_text}"));
         }
 
         let config: ConfigResponse = serde_json::from_str(&body_text)
-            .map_err(|e| anyhow::anyhow!("Failed to parse config response: {}. Body: {}", e, body_text))?;
+            .map_err(|e| anyhow::anyhow!("Failed to parse config response: {e}. Body: {body_text}"))?;
 
         self.prefix = Some(config.overrides.prefix.clone());
         Ok(config.overrides.prefix)
@@ -122,11 +121,11 @@ impl IcebergClient {
         let body_text = response.text().await?;
 
         if !status.is_success() {
-            return Err(anyhow::anyhow!("API returned status {}: {}", status, body_text));
+            return Err(anyhow::anyhow!("API returned status {status}: {body_text}"));
         }
 
         let result: NamespaceList = serde_json::from_str(&body_text)
-            .map_err(|e| anyhow::anyhow!("Failed to parse response: {}. Body: {}", e, body_text))?;
+            .map_err(|e| anyhow::anyhow!("Failed to parse response: {e}. Body: {body_text}"))?;
 
         Ok(result.namespaces.into_iter().map(|ns| ns.join(".")).collect())
     }
@@ -146,11 +145,11 @@ impl IcebergClient {
         let body_text = response.text().await?;
 
         if !status.is_success() {
-            return Err(anyhow::anyhow!("API returned status {}: {}", status, body_text));
+            return Err(anyhow::anyhow!("API returned status {status}: {body_text}"));
         }
 
         let result: TableList = serde_json::from_str(&body_text)
-            .map_err(|e| anyhow::anyhow!("Failed to parse response: {}. Body: {}", e, body_text))?;
+            .map_err(|e| anyhow::anyhow!("Failed to parse response: {e}. Body: {body_text}"))?;
 
         Ok(result.identifiers)
     }
@@ -170,11 +169,11 @@ impl IcebergClient {
         let body_text = response.text().await?;
 
         if !status.is_success() {
-            return Err(anyhow::anyhow!("API returned status {}: {}", status, body_text));
+            return Err(anyhow::anyhow!("API returned status {status}: {body_text}"));
         }
 
         let result: TableMetadataResponse = serde_json::from_str(&body_text)
-            .map_err(|e| anyhow::anyhow!("Failed to parse response: {}. Body: {}", e, body_text))?;
+            .map_err(|e| anyhow::anyhow!("Failed to parse response: {e}. Body: {body_text}"))?;
 
         // Find the current schema
         let current_schema = result.metadata.schemas

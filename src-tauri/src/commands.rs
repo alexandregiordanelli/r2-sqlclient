@@ -25,7 +25,7 @@ pub async fn connect(
 
     let account_id = uri_parts[uri_parts.len() - 2].to_string();
     let bucket_name = uri_parts[uri_parts.len() - 1].to_string();
-    let warehouse = format!("{}_{}", account_id, bucket_name);
+    let warehouse = format!("{account_id}_{bucket_name}");
 
     // Initialize R2 SQL client
     let r2sql_config = R2SqlConfig {
@@ -45,7 +45,7 @@ pub async fn connect(
 
     // Test connection by listing namespaces
     iceberg_client.list_namespaces().await
-        .map_err(|e| format!("Connection failed: {}", e))?;
+        .map_err(|e| format!("Connection failed: {e}"))?;
 
     // Store clients in state
     *state.r2sql_client.lock().await = Some(r2sql_client);
@@ -62,7 +62,7 @@ pub async fn list_namespaces(
     let client = guard.as_mut().ok_or("Not connected")?;
 
     client.list_namespaces().await
-        .map_err(|e| format!("Failed to list namespaces: {}", e))
+        .map_err(|e| format!("Failed to list namespaces: {e}"))
 }
 
 #[tauri::command]
@@ -74,7 +74,7 @@ pub async fn list_tables(
     let client = guard.as_mut().ok_or("Not connected")?;
 
     client.list_tables(&namespace).await
-        .map_err(|e| format!("Failed to list tables: {}", e))
+        .map_err(|e| format!("Failed to list tables: {e}"))
 }
 
 #[tauri::command]
@@ -87,7 +87,7 @@ pub async fn get_table_schema(
     let client = guard.as_mut().ok_or("Not connected")?;
 
     let schema = client.load_table(&namespace, &table).await
-        .map_err(|e| format!("Failed to load table: {}", e))?;
+        .map_err(|e| format!("Failed to load table: {e}"))?;
 
     Ok(schema)
 }
@@ -101,5 +101,5 @@ pub async fn execute_query(
     let client = guard.as_ref().ok_or("Not connected")?;
 
     client.execute_query(&sql).await
-        .map_err(|e| format!("Query failed: {}", e))
+        .map_err(|e| format!("Query failed: {e}"))
 }
