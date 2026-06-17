@@ -20,7 +20,9 @@
       "Bash(git add *)",
       "Bash(git commit -m 'fix: update README badges and remove failing release workflow *)",
       "Bash(git push *)",
-      "Bash(git commit -m 'docs: add application screenshot and update README *)"
+      "Bash(git commit -m 'docs: add application screenshot and update README *)",
+      "Bash(pnpm build *)",
+      "Bash(git commit -m 'fix: resolve TypeScript errors in CI *)"
     ]
   }
 }

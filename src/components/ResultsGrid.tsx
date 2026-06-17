@@ -11,7 +11,7 @@ import {
   ColumnFiltersState,
   VisibilityState,
 } from '@tanstack/react-table';
-import { AlertCircle, Database, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Search, Eye, EyeOff, Columns as ColumnsIcon } from 'lucide-react';
+import { AlertCircle, Database, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Search, Columns as ColumnsIcon } from 'lucide-react';
 import { CellModal } from './CellModal';
 
 export function ResultsGrid() {
@@ -35,10 +35,10 @@ export function ResultsGrid() {
       header: col.name,
       enableSorting: true,
       enableColumnFilter: true,
+      filterFn: 'includesString' as any,
       cell: (info: any) => {
         const value = info.getValue();
         const displayValue = value === null ? 'NULL' : String(value);
-        const truncated = displayValue.length > 50 ? displayValue.substring(0, 50) + '...' : displayValue;
 
         return (
           <button
@@ -54,7 +54,6 @@ export function ResultsGrid() {
           </button>
         );
       },
-      filterFn: 'includesString',
     }));
   }, [hasValidData, queryResult?.schema]);
 
@@ -258,7 +257,7 @@ export function ResultsGrid() {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row, idx) => (
+            {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
                 className="h-6 border-b border-slate-800 hover:bg-slate-800/50 transition-colors"

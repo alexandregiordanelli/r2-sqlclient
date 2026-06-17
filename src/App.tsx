@@ -5,7 +5,7 @@ import { QueryEditor } from './components/QueryEditor';
 import { ResultsGrid } from './components/ResultsGrid';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useConnectionStore } from './stores/connectionStore';
-import { Database, Settings, Loader2, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { Database, Settings, PanelLeftClose, PanelLeft } from 'lucide-react';
 
 function App() {
   const [showConnectionDialog, setShowConnectionDialog] = useState(false);
