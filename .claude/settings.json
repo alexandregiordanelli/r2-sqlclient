@@ -12,7 +12,14 @@
       "Bash(jq)",
       "Bash(pkill -f \"tauri dev\")",
       "Bash(chmod +x /Users/alexandregiordanelli/Downloads/r2-sqlclient/scripts/setup.sh)",
-      "Bash(gh repo *)"
+      "Bash(gh repo *)",
+      "Bash(chmod +x scripts/setup-github.sh)",
+      "Bash(scripts/setup-github.sh)",
+      "Bash(gh release *)",
+      "Bash(gh run *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'fix: update README badges and remove failing release workflow *)",
+      "Bash(git push *)"
     ]
   }
 }

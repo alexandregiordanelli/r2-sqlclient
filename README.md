@@ -2,15 +2,16 @@
 
 <div align="center">
 
-![R2 SQL Client](https://img.shields.io/badge/Tauri-2.11-blue?style=flat-square&logo=tauri)
-![React](https://img.shields.io/badge/React-18.3-61dafb?style=flat-square&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178c6?style=flat-square&logo=typescript)
-![Rust](https://img.shields.io/badge/Rust-1.80-orange?style=flat-square&logo=rust)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+[![Tauri](https://img.shields.io/badge/Tauri-2.11-24C8DB?style=flat-square&logo=tauri)](https://tauri.app)
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?style=flat-square&logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
+[![Rust](https://img.shields.io/badge/Rust-1.80-CE412B?style=flat-square&logo=rust)](https://www.rust-lang.org)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/alexandregiordanelli/r2-sqlclient?style=flat-square)](https://github.com/alexandregiordanelli/r2-sqlclient/releases)
 
 **A powerful, modern desktop SQL client for Cloudflare R2 SQL with AI-powered query assistance**
 
-[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Development](#-development)
+[Features](#-features) • [Installation](#-installation) • [Screenshots](#-screenshots) • [Usage](#-usage)
 
 </div>
 
@@ -20,15 +21,21 @@
 
 R2 SQL Client is a **professional desktop application** that provides a DBeaver-style interface for querying Apache Iceberg tables in Cloudflare R2 Data Catalog using the R2 SQL HTTP API. Built with Tauri (Rust) and React for native performance and modern UX.
 
-### 📸 Screenshots
+## 📸 Screenshots
 
-**Main Interface - Query Execution**
+<div align="center">
+
+### Main Interface - Query Execution
 ![Main Interface](docs/screenshots/main-interface.png)
 *Schema explorer, SQL editor with Monaco, and advanced results grid with sorting/filtering*
 
-**AI Query Assistant**
-![AI Assistant](docs/screenshots/ai-assistant.png)
+### AI Query Assistant
+![AI Assistant](docs/screenshots/ai-assistant.png)  
 *Natural language to SQL generation powered by GPT-4*
+
+> **Note:** Screenshots show the application running on macOS. Download the images from the Issues or add them manually to `docs/screenshots/`.
+
+</div>
 
 ## Features
 
