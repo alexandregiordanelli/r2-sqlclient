@@ -1,0 +1,163 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release v${{ steps.get_version.outputs.VERSION }}
+          body: |
+            ## R2 SQL Client v${{ steps.get_version.outputs.VERSION }}
+
+            ### Downloads
+            - **Linux**: `.deb` (Debian/Ubuntu) or `.AppImage` (universal)
+            - **macOS**: `.dmg` (Intel/Apple Silicon universal)
+            - **Windows**: `.msi` or `.exe` installer
+
+            ### Changes
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md)
+          draft: false
+          prerelease: false
+
+  build-release:
+    name: Build Release
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            arch: x86_64
+          - os: macos-latest
+            platform: macos
+            arch: universal
+          - os: windows-latest
+            platform: windows
+            arch: x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libssl-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Build Tauri app
+        run: pnpm tauri build
+
+      # Linux uploads
+      - name: Upload Linux DEB
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./src-tauri/target/release/bundle/deb/tauri-app_0.1.0_amd64.deb
+          asset_name: r2-sql-client_${{ github.ref_name }}_amd64.deb
+          asset_content_type: application/vnd.debian.binary-package
+
+      - name: Upload Linux AppImage
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./src-tauri/target/release/bundle/appimage/tauri-app_0.1.0_amd64.AppImage
+          asset_name: r2-sql-client_${{ github.ref_name }}_amd64.AppImage
+          asset_content_type: application/x-executable
+
+      # macOS uploads
+      - name: Upload macOS DMG
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./src-tauri/target/release/bundle/dmg/tauri-app_0.1.0_universal.dmg
+          asset_name: r2-sql-client_${{ github.ref_name }}_universal.dmg
+          asset_content_type: application/x-apple-diskimage
+
+      # Windows uploads
+      - name: Upload Windows MSI
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./src-tauri/target/release/bundle/msi/tauri-app_0.1.0_x64_en-US.msi
+          asset_name: r2-sql-client_${{ github.ref_name }}_x64.msi
+          asset_content_type: application/x-msi
+
+      - name: Upload Windows EXE
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./src-tauri/target/release/bundle/nsis/tauri-app_0.1.0_x64-setup.exe
+          asset_name: r2-sql-client_${{ github.ref_name }}_x64-setup.exe
+          asset_content_type: application/x-msdownload
