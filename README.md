@@ -17,9 +17,44 @@
 
 ---
 
-## 🎯 Overview
+## 🎯 Why R2 SQL Client?
 
-R2 SQL Client is a **professional desktop application** that provides a DBeaver-style interface for querying Apache Iceberg tables in Cloudflare R2 Data Catalog using the R2 SQL HTTP API. Built with Tauri (Rust) and React for native performance and modern UX.
+### The Problem
+
+[Cloudflare R2 SQL](https://developers.cloudflare.com/r2-sql/) is a powerful **serverless distributed query engine** that lets you run SQL queries on petabyte-scale data stored in R2 buckets using [Apache Iceberg tables](https://iceberg.apache.org/). However, it only provides:
+
+- **REST API** - No visual interface for exploration
+- **Command-line only** - Requires curl/HTTP clients for queries
+- **No schema browser** - Must manually discover namespaces and tables via API calls
+
+This makes it **difficult to explore your data**, prototype queries, and take full advantage of Iceberg's ACID transactions, schema evolution, and time travel features.
+
+### The Solution
+
+**R2 SQL Client** bridges this gap by providing a **DBeaver-style desktop application** that gives you:
+
+- 🗂️ **Visual Schema Explorer** - Browse namespaces, tables, and column schemas with one click
+- ⚡ **Interactive SQL Editor** - Write and execute queries with syntax highlighting and shortcuts
+- 📊 **Advanced Data Grid** - Sort, filter, and paginate through millions of rows with virtual scrolling
+- 🔍 **Table Metadata** - View Iceberg schema details, partition specs, and statistics
+- 💾 **Connection Profiles** - Save and switch between multiple R2 SQL catalogs
+- 🚀 **Native Performance** - Built with Tauri (Rust) for fast startup and low memory usage
+
+### When to Use R2 SQL Client
+
+- **Data Exploration** - Quickly browse and query your R2 Data Catalog without writing API calls
+- **Query Development** - Prototype SQL queries with instant feedback before integrating into production code
+- **Data Analysis** - Run ad-hoc analytics on Iceberg tables with powerful filtering and sorting
+- **Schema Discovery** - Understand your data structure and column types visually
+- **Learning Iceberg** - Experiment with Apache Iceberg features (partitioning, snapshots, time travel) through a friendly UI
+
+### Technologies
+
+Built on top of Cloudflare's modern data stack:
+
+- **[R2 SQL HTTP API](https://developers.cloudflare.com/r2-sql/api/)** - Serverless query engine with 173 scalar functions and 33 aggregate functions
+- **[R2 Data Catalog](https://developers.cloudflare.com/r2/data-catalog/)** - Managed Apache Iceberg catalog with ACID transactions
+- **[Apache Iceberg REST API](https://github.com/apache/iceberg/blob/main/open-api/rest-catalog-open-api.yaml)** - Industry-standard table format with schema evolution and time travel
 
 ## 📸 Screenshot
 
