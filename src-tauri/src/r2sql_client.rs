@@ -57,8 +57,7 @@ impl R2SqlClient {
 
         let url = format!(
             "https://api.sql.cloudflarestorage.com/api/v1/accounts/{}/r2-sql/query/{}",
-            self.config.account_id,
-            self.config.bucket_name
+            self.config.account_id, self.config.bucket_name
         );
 
         // Set a 60 second timeout for queries
@@ -72,10 +71,14 @@ impl R2SqlClient {
                 .json(&QueryRequest {
                     query: sql.to_string(),
                 })
-                .send()
+                .send(),
         )
         .await
-        .map_err(|_| anyhow::anyhow!("Query timeout after 60 seconds. Try adding a LIMIT clause to your query."))??;
+        .map_err(|_| {
+            anyhow::anyhow!(
+                "Query timeout after 60 seconds. Try adding a LIMIT clause to your query."
+            )
+        })??;
 
         if !response.status().is_success() {
             let error_text = response.text().await?;

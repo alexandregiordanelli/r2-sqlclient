@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone)]
 pub struct IcebergConfig {
-    pub catalog_uri: String,  // https://catalog.cloudflarestorage.com/{account_id}/{bucket_name}
-    pub warehouse: String,     // {account_id}_{bucket_name}
+    pub catalog_uri: String, // https://catalog.cloudflarestorage.com/{account_id}/{bucket_name}
+    pub warehouse: String,   // {account_id}_{bucket_name}
     pub api_token: String,
 }
 
@@ -84,9 +84,13 @@ impl IcebergClient {
             return Ok(prefix.clone());
         }
 
-        let url = format!("{}/v1/config?warehouse={}", self.config.catalog_uri, self.config.warehouse);
+        let url = format!(
+            "{}/v1/config?warehouse={}",
+            self.config.catalog_uri, self.config.warehouse
+        );
 
-        let response = self.client
+        let response = self
+            .client
             .get(&url)
             .header("Authorization", format!("Bearer {}", self.config.api_token))
             .send()
@@ -99,8 +103,9 @@ impl IcebergClient {
             return Err(anyhow::anyhow!("API returned status {status}: {body_text}"));
         }
 
-        let config: ConfigResponse = serde_json::from_str(&body_text)
-            .map_err(|e| anyhow::anyhow!("Failed to parse config response: {e}. Body: {body_text}"))?;
+        let config: ConfigResponse = serde_json::from_str(&body_text).map_err(|e| {
+            anyhow::anyhow!("Failed to parse config response: {e}. Body: {body_text}")
+        })?;
 
         self.prefix = Some(config.overrides.prefix.clone());
         Ok(config.overrides.prefix)
@@ -108,10 +113,13 @@ impl IcebergClient {
 
     pub async fn list_namespaces(&mut self) -> Result<Vec<String>, anyhow::Error> {
         let prefix = self.get_prefix().await?;
-        let url = format!("{}/v1/{}/namespaces?warehouse={}",
-            self.config.catalog_uri, prefix, self.config.warehouse);
+        let url = format!(
+            "{}/v1/{}/namespaces?warehouse={}",
+            self.config.catalog_uri, prefix, self.config.warehouse
+        );
 
-        let response = self.client
+        let response = self
+            .client
             .get(&url)
             .header("Authorization", format!("Bearer {}", self.config.api_token))
             .send()
@@ -127,15 +135,25 @@ impl IcebergClient {
         let result: NamespaceList = serde_json::from_str(&body_text)
             .map_err(|e| anyhow::anyhow!("Failed to parse response: {e}. Body: {body_text}"))?;
 
-        Ok(result.namespaces.into_iter().map(|ns| ns.join(".")).collect())
+        Ok(result
+            .namespaces
+            .into_iter()
+            .map(|ns| ns.join("."))
+            .collect())
     }
 
-    pub async fn list_tables(&mut self, namespace: &str) -> Result<Vec<TableIdentifier>, anyhow::Error> {
+    pub async fn list_tables(
+        &mut self,
+        namespace: &str,
+    ) -> Result<Vec<TableIdentifier>, anyhow::Error> {
         let prefix = self.get_prefix().await?;
-        let url = format!("{}/v1/{}/namespaces/{}/tables?warehouse={}",
-            self.config.catalog_uri, prefix, namespace, self.config.warehouse);
+        let url = format!(
+            "{}/v1/{}/namespaces/{}/tables?warehouse={}",
+            self.config.catalog_uri, prefix, namespace, self.config.warehouse
+        );
 
-        let response = self.client
+        let response = self
+            .client
             .get(&url)
             .header("Authorization", format!("Bearer {}", self.config.api_token))
             .send()
@@ -154,12 +172,19 @@ impl IcebergClient {
         Ok(result.identifiers)
     }
 
-    pub async fn load_table(&mut self, namespace: &str, table: &str) -> Result<Schema, anyhow::Error> {
+    pub async fn load_table(
+        &mut self,
+        namespace: &str,
+        table: &str,
+    ) -> Result<Schema, anyhow::Error> {
         let prefix = self.get_prefix().await?;
-        let url = format!("{}/v1/{}/namespaces/{}/tables/{}?warehouse={}",
-            self.config.catalog_uri, prefix, namespace, table, self.config.warehouse);
+        let url = format!(
+            "{}/v1/{}/namespaces/{}/tables/{}?warehouse={}",
+            self.config.catalog_uri, prefix, namespace, table, self.config.warehouse
+        );
 
-        let response = self.client
+        let response = self
+            .client
             .get(&url)
             .header("Authorization", format!("Bearer {}", self.config.api_token))
             .send()
@@ -176,7 +201,9 @@ impl IcebergClient {
             .map_err(|e| anyhow::anyhow!("Failed to parse response: {e}. Body: {body_text}"))?;
 
         // Find the current schema
-        let current_schema = result.metadata.schemas
+        let current_schema = result
+            .metadata
+            .schemas
             .into_iter()
             .find(|s| s.schema_id == result.metadata.current_schema_id)
             .ok_or_else(|| anyhow::anyhow!("Current schema not found"))?;

@@ -1,6 +1,6 @@
-mod r2sql_client;
-mod iceberg_client;
 mod commands;
+mod iceberg_client;
+mod r2sql_client;
 
 use commands::AppState;
 use std::sync::Arc;

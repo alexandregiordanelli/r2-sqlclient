@@ -1,7 +1,7 @@
-use crate::r2sql_client::{R2SqlClient, R2SqlConfig, QueryResponse};
-use crate::iceberg_client::{IcebergClient, IcebergConfig, TableIdentifier, Schema};
-use tauri::State;
+use crate::iceberg_client::{IcebergClient, IcebergConfig, Schema, TableIdentifier};
+use crate::r2sql_client::{QueryResponse, R2SqlClient, R2SqlConfig};
 use std::sync::Arc;
+use tauri::State;
 use tokio::sync::Mutex;
 
 pub struct AppState {
@@ -13,7 +13,7 @@ pub struct AppState {
 pub async fn connect(
     catalog_uri: String,
     api_token: String,
-    state: State<'_, AppState>
+    state: State<'_, AppState>,
 ) -> Result<String, String> {
     // Extract account_id and bucket_name from catalog URI
     // Format: https://catalog.cloudflarestorage.com/{account_id}/{bucket_name}
@@ -44,7 +44,9 @@ pub async fn connect(
     let mut iceberg_client = IcebergClient::new(iceberg_config);
 
     // Test connection by listing namespaces
-    iceberg_client.list_namespaces().await
+    iceberg_client
+        .list_namespaces()
+        .await
         .map_err(|e| format!("Connection failed: {e}"))?;
 
     // Store clients in state
@@ -55,25 +57,27 @@ pub async fn connect(
 }
 
 #[tauri::command]
-pub async fn list_namespaces(
-    state: State<'_, AppState>
-) -> Result<Vec<String>, String> {
+pub async fn list_namespaces(state: State<'_, AppState>) -> Result<Vec<String>, String> {
     let mut guard = state.iceberg_client.lock().await;
     let client = guard.as_mut().ok_or("Not connected")?;
 
-    client.list_namespaces().await
+    client
+        .list_namespaces()
+        .await
         .map_err(|e| format!("Failed to list namespaces: {e}"))
 }
 
 #[tauri::command]
 pub async fn list_tables(
     namespace: String,
-    state: State<'_, AppState>
+    state: State<'_, AppState>,
 ) -> Result<Vec<TableIdentifier>, String> {
     let mut guard = state.iceberg_client.lock().await;
     let client = guard.as_mut().ok_or("Not connected")?;
 
-    client.list_tables(&namespace).await
+    client
+        .list_tables(&namespace)
+        .await
         .map_err(|e| format!("Failed to list tables: {e}"))
 }
 
@@ -81,12 +85,14 @@ pub async fn list_tables(
 pub async fn get_table_schema(
     namespace: String,
     table: String,
-    state: State<'_, AppState>
+    state: State<'_, AppState>,
 ) -> Result<Schema, String> {
     let mut guard = state.iceberg_client.lock().await;
     let client = guard.as_mut().ok_or("Not connected")?;
 
-    let schema = client.load_table(&namespace, &table).await
+    let schema = client
+        .load_table(&namespace, &table)
+        .await
         .map_err(|e| format!("Failed to load table: {e}"))?;
 
     Ok(schema)
@@ -95,11 +101,13 @@ pub async fn get_table_schema(
 #[tauri::command]
 pub async fn execute_query(
     sql: String,
-    state: State<'_, AppState>
+    state: State<'_, AppState>,
 ) -> Result<QueryResponse, String> {
     let guard = state.r2sql_client.lock().await;
     let client = guard.as_ref().ok_or("Not connected")?;
 
-    client.execute_query(&sql).await
+    client
+        .execute_query(&sql)
+        .await
         .map_err(|e| format!("Query failed: {e}"))
 }
