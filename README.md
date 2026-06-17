@@ -21,19 +21,13 @@
 
 R2 SQL Client is a **professional desktop application** that provides a DBeaver-style interface for querying Apache Iceberg tables in Cloudflare R2 Data Catalog using the R2 SQL HTTP API. Built with Tauri (Rust) and React for native performance and modern UX.
 
-## 📸 Screenshots
+## 📸 Screenshot
 
 <div align="center">
 
-### Main Interface - Query Execution
-![Main Interface](docs/screenshots/main-interface.png)
-*Schema explorer, SQL editor with Monaco, and advanced results grid with sorting/filtering*
+![R2 SQL Client Interface](docs/screenshots/main_interface.png)
 
-### AI Query Assistant
-![AI Assistant](docs/screenshots/ai-assistant.png)  
-*Natural language to SQL generation powered by GPT-4*
-
-> **Note:** Screenshots show the application running on macOS. Download the images from the Issues or add them manually to `docs/screenshots/`.
+*DBeaver-style interface showing schema explorer, SQL editor with syntax highlighting, advanced data grid with sorting/filtering/pagination, and AI query assistant*
 
 </div>
 
