@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"cloudflare\" /Users/alexandregiordanelli/Downloads/ 2>/dev/null | head -5)",
+      "Read(//Users/alexandregiordanelli/Downloads/**)",
+      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")",
+      "WebFetch(domain:developers.cloudflare.com)",
+      "Bash(npx create-tauri-app@latest . --manager pnpm --template react-ts --yes --force)",
+      "Bash(pnpm install *)",
+      "Bash(cargo build *)",
+      "Bash(pnpm tauri *)",
+      "Bash(jq)",
+      "Bash(pkill -f \"tauri dev\")",
+      "Bash(chmod +x /Users/alexandregiordanelli/Downloads/r2-sqlclient/scripts/setup.sh)",
+      "Bash(gh repo *)"
+    ]
+  }
+}
