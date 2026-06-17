@@ -48,6 +48,18 @@ R2 SQL Client is a **professional desktop application** that provides a DBeaver-
 
 ## Installation
 
+### Download Pre-built Binaries
+
+Download the latest release from [GitHub Releases](https://github.com/alexandregiordanelli/r2-sqlclient/releases):
+
+- **Linux**: `.deb` (Debian/Ubuntu) or `.AppImage` (universal)
+- **macOS**: `.dmg` (Intel/Apple Silicon universal) - [⚠️ See macOS instructions](docs/MACOS_INSTALL.md)
+- **Windows**: `.msi` or `.exe` installer
+
+**macOS users**: The app is not code-signed. See [macOS Installation Guide](docs/MACOS_INSTALL.md) to bypass Gatekeeper.
+
+### Build from Source
+
 ```bash
 # Install dependencies
 pnpm install
